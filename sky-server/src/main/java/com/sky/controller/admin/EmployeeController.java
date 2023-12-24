@@ -1,6 +1,8 @@
 package com.sky.controller.admin;
 
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.constant.PasswordConstant;
+import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
@@ -16,6 +18,7 @@ import io.jsonwebtoken.Claims;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -117,26 +120,15 @@ public class EmployeeController {
     // TODO 新增员工,密码默认123456在数据持久层直接传入
     @PostMapping
     @ApiOperation("新增员工")
-    Result<String>  add(@RequestHeader("token") String token, @RequestBody EmployeeDTO employeeDTO){
-        try {
-            Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
-            Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
-            Employee employee = Employee.builder()
-                    .id(employeeDTO.getId())
-                    .name(employeeDTO.getName())
-                    .username(employeeDTO.getUsername())
-                    .password("123456")
-                    .phone(employeeDTO.getPhone())
-                    .sex(employeeDTO.getSex())
-                    .idNumber(employeeDTO.getIdNumber())
-                    .createUser(empId).build();
-            if(employeeService.add(employee)){
-                return Result.success();
-            }else {
-                return Result.error("add employee fail");
-            }
-        } catch (Exception ex) {
-            return Result.error("token check fail");
+    Result<String>  add(@RequestBody EmployeeDTO employeeDTO) throws Exception{
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
+        employee.setPassword(PasswordConstant.DEFAULT_PASSWORD);
+        employee.setCreateUser(BaseContext.getCurrentId());
+        if(employeeService.add(employee)){
+            return Result.success();
+        }else {
+            return Result.error("add employee fail");
         }
     }
 
@@ -155,25 +147,14 @@ public class EmployeeController {
     // TODO 编辑员工信息
     @PutMapping
     @ApiOperation("修改员工信息")
-    Result<String> modify(@RequestHeader("token") String token, @RequestBody EmployeeDTO employeeDTO){
-        try {
-            Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
-            Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
-            Employee employee = Employee.builder()
-                    .id(employeeDTO.getId())
-                    .name(employeeDTO.getName())
-                    .username(employeeDTO.getUsername())
-                    .phone(employeeDTO.getPhone())
-                    .sex(employeeDTO.getSex())
-                    .idNumber(employeeDTO.getIdNumber())
-                    .updateUser(empId).build();
-            if(employeeService.modify(employee)){
-                return Result.success();
-            }else {
-                return Result.error("modify employee fail");
-            }
-        } catch (Exception ex) {
-            return Result.error("token check fail");
+    Result<String> modify(@RequestBody EmployeeDTO employeeDTO){
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        if(employeeService.modify(employee)){
+            return Result.success();
+        }else {
+            return Result.error("modify employee fail");
         }
     }
 
