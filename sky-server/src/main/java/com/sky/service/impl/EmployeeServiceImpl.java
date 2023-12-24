@@ -2,7 +2,10 @@ package com.sky.service.impl;
 
 import com.sky.constant.MessageConstant;
 import com.sky.constant.StatusConstant;
+import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
+import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
@@ -12,6 +15,8 @@ import com.sky.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
+import java.util.List;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -54,4 +59,27 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employee;
     }
 
+    public boolean editPassword(PasswordEditDTO passwordEditDTO) {
+        return employeeMapper.updatePassword(passwordEditDTO) == 1;
+    }
+
+    public boolean modifyStatus(Long id, int status) {
+        return employeeMapper.modifyStatus(id, status) == 1;
+    }
+
+    public List<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
+        return employeeMapper.pageQuery(employeePageQueryDTO);
+    }
+
+    public boolean add(Employee employee) {
+        return employeeMapper.add(employee) == 1;
+    }
+
+    public Employee getById(Long id) {
+        return employeeMapper.getById(id);
+    }
+
+    public boolean modify(Employee employee) {
+        return employeeMapper.modify(employee) == 1;
+    }
 }
