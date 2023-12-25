@@ -1,11 +1,14 @@
 package com.sky.mapper;
 
+import com.github.pagehelper.Page;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import java.util.List;
+
+import com.sky.result.PageResult;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -28,8 +31,7 @@ public interface EmployeeMapper {
     @Update("update employee set status = #{status} where id = #{id}")
     int modifyStatus(Long id, int status);
 
-    @Select("select * from employee limit ${(page -1) * pageSize}, #{pageSize}")
-    List<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
+    Page<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
 
     @Insert("insert into employee (id, id_number, name, phone, sex, username, " +
             "password, create_time, create_user) " +

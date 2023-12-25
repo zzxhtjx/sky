@@ -9,6 +9,7 @@ import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
+import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.EmployeeService;
 import com.sky.utils.JwtUtil;
@@ -103,17 +104,12 @@ public class EmployeeController {
     // 这个String的类型与框架集合自动转换成List的关系
     @GetMapping("/page")
     @ApiOperation("员工分页查询")
-    Result<String> pageQuery(@RequestBody EmployeePageQueryDTO employeePageQueryDTO){
-        List<Employee> data = employeeService.pageQuery(employeePageQueryDTO);
+    Result<PageResult> pageQuery(EmployeePageQueryDTO employeePageQueryDTO){
+        PageResult data = employeeService.pageQuery(employeePageQueryDTO);
         if(data == null){
             return Result.error("page query fail");
         }else {
-            int total = data.size();
-            Map<String, Object> map = new HashMap<>();
-            map.put("total", total);
-            map.put("records", data);
-            String json = map.toString();
-            return Result.success(json);
+            return Result.success(data);
         }
     }
 

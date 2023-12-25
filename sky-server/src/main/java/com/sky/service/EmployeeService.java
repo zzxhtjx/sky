@@ -5,6 +5,7 @@ import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
+import com.sky.result.PageResult;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public interface EmployeeService {
 
     boolean modifyStatus(Long id, int status);
 
-    List<Employee> pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
+    PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO);
 
     boolean add(Employee employee);
 
