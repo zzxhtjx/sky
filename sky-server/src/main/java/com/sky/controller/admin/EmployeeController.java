@@ -92,9 +92,9 @@ public class EmployeeController {
     }
 
     // TODO 实现启用还是禁用账号
-    @PutMapping("/status/{status}")
+    @PostMapping("/status/{status}")
     @ApiOperation("修改员工状态")
-    Result<String> modifyStatus(@RequestBody Long id, @PathVariable int status){
+        Result<String> modifyStatus(@RequestParam Long id, @PathVariable int status){
         if(employeeService.modifyStatus(id, status)){
             return Result.success();
         }else return Result.error("modify the state of id : " + id + " fail");
