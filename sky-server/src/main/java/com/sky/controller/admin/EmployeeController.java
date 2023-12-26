@@ -75,14 +75,8 @@ public class EmployeeController {
     // TODO 前端提供的DTO是没有Id信息的,需要从jwt解析获得empId
     @PutMapping("/editPassword")
     @ApiOperation("修改员工密码")
-    public Result<String> editPassword(@RequestHeader("token") String token, @RequestBody PasswordEditDTO passwordEditDTO){
-        try {
-            Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
-            Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
-            passwordEditDTO.setEmpId(empId);
-        } catch (Exception ex) {
-            return Result.error("the token check fail");
-        }
+    public Result<String> editPassword(@RequestBody PasswordEditDTO passwordEditDTO){
+        passwordEditDTO.setEmpId(BaseContext.getCurrentId());
         if(employeeService.editPassword(passwordEditDTO)) {
             return Result.success();
         }else return Result.error("modify the password of id : " + passwordEditDTO.getEmpId()
