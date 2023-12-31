@@ -49,4 +49,6 @@ public interface DishMapper {
 
     @Update("update dish set status = #{status} where id = #{id}")
     void modifyStatus(int status, Long id);
+
+    void deleteByIds(List<Long> dishIds);
 }

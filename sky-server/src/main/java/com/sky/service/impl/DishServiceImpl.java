@@ -3,13 +3,17 @@ package com.sky.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.CategoryTypeConstant;
+import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.CategoryMapper;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
+import com.sky.mapper.SetmealDishMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
@@ -36,6 +40,8 @@ public class DishServiceImpl implements DishService {
     private DishFlavorMapper dishFlavorMapper;
     @Autowired
     private CategoryMapper categoryMapper;
+    @Autowired
+    private SetmealDishMapper setmealDishMapper;
     /**
      * description:多张表操作需要添加事务注解
      * @since: 1.0.0
@@ -110,17 +116,29 @@ public class DishServiceImpl implements DishService {
     }
 
     @Transactional
-    public void delete(List<Long> data) {
-        for(Long id : data){
-            dishMapper.delete(id);
-            dishFlavorMapper.delete(id);
+    public void delete(List<Long> ids) {
+        //判断是否存在起售中的菜品数据
+        for(Long id : ids){
+            Dish dish = getDishById(id);
+            if(dish.getStatus().equals(StatusConstant.ENABLE))   {
+                throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
+            }
         }
+        //判断是否存在套餐中的菜品数据
+        List<Long> setmealIds = getSetmealIdsByDishIds(ids);
+        if(setmealIds != null && !setmealIds.isEmpty()){
+            throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
+        }
+        dishMapper.deleteByIds(ids);
+        dishFlavorMapper.deleteByIds(ids);
     }
 
-    @Override
     public void modifyStatus(int status, Long id) {
         dishMapper.modifyStatus(status, id);
     }
 
 
+    public List<Long> getSetmealIdsByDishIds(List<Long> dishIds) {
+        return setmealDishMapper.getSetmealIdsByDishIds(dishIds);
+    }
 }

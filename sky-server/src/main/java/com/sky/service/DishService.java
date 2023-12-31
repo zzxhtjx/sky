@@ -32,4 +32,6 @@ public interface DishService {
     void delete(List<Long> data);
 
     void modifyStatus(int status, Long id);
+
+    List<Long> getSetmealIdsByDishIds(List<Long> dishIds);
 }
