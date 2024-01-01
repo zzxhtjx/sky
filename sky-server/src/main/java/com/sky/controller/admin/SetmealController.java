@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @Description 套餐相关
  * @Classname SetmealController
@@ -50,5 +52,25 @@ public class SetmealController {
     @ApiOperation("根据id获取数据")
     Result<SetmealVO> getById(@PathVariable Long id){
         return Result.success(setmealService.getById(id));
+    }
+
+    @PutMapping
+    @ApiOperation("修改套餐")
+    Result<String> update(@RequestBody SetmealDTO setmealDTO){
+        if(setmealService.update(setmealDTO)){
+            return Result.success();
+        }else {
+            return Result.error("修改失败");
+        }
+    }
+
+    @DeleteMapping
+    @ApiOperation("批量删除")
+    Result<String> delete(@RequestParam List<Long> ids){
+        if(setmealService.delete(ids)){
+            return Result.success();
+        }else {
+            return Result.error("存在起售中的套餐不能删除");
+        }
     }
 }
