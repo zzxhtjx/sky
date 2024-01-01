@@ -8,6 +8,7 @@ import com.sky.enumeration.OperationType;
 import com.sky.vo.SetmealVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface SetmealMapper {
@@ -24,4 +25,10 @@ public interface SetmealMapper {
     void save(Setmeal setmeal);
 
     Page<SetmealVO> pageQuery(SetmealPageQueryDTO setmealPageQueryDTO);
+
+    @Update("update setmeal set " +
+            "status = #{status} where id = #{id}")
+    void modifyStatus(int status, Long id);
+
+    SetmealVO getById(Long id);
 }

@@ -5,6 +5,7 @@ import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.SetmealService;
+import com.sky.vo.SetmealVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -36,5 +37,18 @@ public class SetmealController {
     @ApiOperation("分页查询")
     Result<PageResult> pageQuery(SetmealPageQueryDTO setmealPageQueryDTO){
         return Result.success(setmealService.pageQuery(setmealPageQueryDTO));
+    }
+
+    @PostMapping("/status/{status}")
+    @ApiOperation("修改状态")
+    Result<String> modifyStatus(@PathVariable int status, Long id){
+        setmealService.modifyStatus(status, id);
+        return Result.success();
+    }
+
+    @GetMapping("/{id}")
+    @ApiOperation("根据id获取数据")
+    Result<SetmealVO> getById(@PathVariable Long id){
+        return Result.success(setmealService.getById(id));
     }
 }

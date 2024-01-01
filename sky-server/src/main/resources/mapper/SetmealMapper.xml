@@ -2,6 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.SetmealMapper">
+    <resultMap id="getByIdMap" type="com.sky.vo.SetmealVO">
+        <id property="id" column="id"></id>
+        <result property="categoryId" column="category_id"></result>
+        <result property="name" column="name"></result>
+        <result property="price" column="price"></result>
+        <result property="status" column="status"></result>
+        <result property="description" column="description"></result>
+        <result property="image" column="image"></result>
+        <result property="updateTime" column="update_time"></result>
+        <result property="categoryName" column="categoryName"></result>
+        <association property="setmealDishes" column="setmeal_id" javaType="SetmealDish">
+            <id property="id" column="id"></id>
+            <result property="name" column="name"></result>
+            <result property="dishId" column="dish_id"></result>
+            <result property="copies" column="copies"></result>
+            <result property="price" column="price"></result>
+            <result property="setmealId" column="setmeal_id"></result>
+        </association>
+    </resultMap>
+
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
         insert into setmeal(category_id, name, price, status, description, image, create_time, update_time, create_user, update_user)
         values(#{categoryId}, #{name}, #{price}, #{status}, #{description}, #{image}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})
@@ -21,5 +41,11 @@
                 and status = #{status}
             </if>
         </where>
+    </select>
+
+    <select id="getById" resultMap="getByIdMap">
+        select c.name as categoryName, s.id, s.category_id, s.name, s.price,
+               s.status, s.description, s.image, s.update_time, sd.* from category c, setmeal s, setmeal_dish sd
+            where s.id = sd.setmeal_id and s.id = #{id} and c.id = s.category_id
     </select>
 </mapper>

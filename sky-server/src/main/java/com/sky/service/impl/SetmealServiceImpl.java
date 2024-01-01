@@ -50,4 +50,13 @@ public class SetmealServiceImpl implements SetmealService {
         Page<SetmealVO> data = setmealMapper.pageQuery(setmealPageQueryDTO);
         return new PageResult(data.size(), data);
     }
+
+
+    public void modifyStatus(int status, Long id) {
+       setmealMapper.modifyStatus(status, id);
+    }
+
+    public SetmealVO getById(Long id){
+        return setmealMapper.getById(id);
+    }
 }
