@@ -11,3 +11,8 @@ sky:
     bucket-name: dongxuanmang
     access-key-id: LTAI5t7mYav1FjzhyfPgneCj
     access-key-secret: uXdXg4iqIDI3l4HIS9Y7jlQD9IhQQr
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+    database: 0
