@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Description TODO
@@ -156,7 +157,10 @@ public class DishServiceImpl implements DishService {
         for (Dish d : dishList) {
             DishVO dishVO = new DishVO();
             BeanUtils.copyProperties(d,dishVO);
-
+            if(Objects.equals(dishVO.getStatus(), StatusConstant.DISABLE)){
+                //停售的不用管
+                continue;
+            }
             //根据菜品id查询对应的口味
             List<DishFlavor> flavors = dishFlavorMapper.getById(d.getId());
 
