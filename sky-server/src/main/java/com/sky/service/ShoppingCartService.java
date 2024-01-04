@@ -11,7 +11,7 @@ import java.util.List;
  * @Date 2024/1/4 11:18
  * @Created by dongxuanmang
  */
-public interface ShoppingCartServervice {
+public interface ShoppingCartService {
     void add(ShoppingCartDTO shoppingCartDTO);
 
     List<ShoppingCart> getAll(Long userId);

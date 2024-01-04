@@ -4,7 +4,7 @@ import com.sky.context.BaseContext;
 import com.sky.dto.ShoppingCartDTO;
 import com.sky.entity.ShoppingCart;
 import com.sky.result.Result;
-import com.sky.service.ShoppingCartServervice;
+import com.sky.service.ShoppingCartService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -25,32 +25,32 @@ import java.util.List;
 @Api(tags = "购物车")
 public class ShoppingCartController {
     @Autowired
-    private ShoppingCartServervice shoppingCartServervice;
+    private ShoppingCartService shoppingCartService;
 
     @PostMapping("/add")
     @ApiOperation("添加购物车")
     Result insert(@RequestBody ShoppingCartDTO shoppingCartDTO){
-        shoppingCartServervice.add(shoppingCartDTO);
+        shoppingCartService.add(shoppingCartDTO);
         return Result.success();
     }
 
     @GetMapping("/list")
     @ApiOperation("查询购物车")
     Result<List<ShoppingCart>> getAll(){
-        return Result.success(shoppingCartServervice.getAll(BaseContext.getCurrentId()));
+        return Result.success(shoppingCartService.getAll(BaseContext.getCurrentId()));
     }
 
     @PostMapping("/sub")
     @ApiOperation("删除购物车某个商品")
     Result delete(@RequestBody ShoppingCartDTO shoppingCartDTO){
-        shoppingCartServervice.delete(shoppingCartDTO);
+        shoppingCartService.delete(shoppingCartDTO);
         return Result.success();
     }
 
     @DeleteMapping("/clean")
     @ApiOperation("清除购物车")
     Result clean(){
-        shoppingCartServervice.clean(BaseContext.getCurrentId());
+        shoppingCartService.clean(BaseContext.getCurrentId());
         return Result.success();
     }
 
