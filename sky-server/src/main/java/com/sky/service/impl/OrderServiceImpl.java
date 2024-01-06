@@ -161,7 +161,7 @@ public class OrderServiceImpl implements OrderService {
         Map map = new HashMap<>();
         map.put("type", 1);
         map.put("orderId", ordersDB.getId());
-        map.put("context", "订单号：" + outTradeNo);
+        map.put("content", "订单号：" + outTradeNo);
 
         String json = JSON.toJSONString(map);
         webSocketServer.sendToAllClient(json);
@@ -206,7 +206,19 @@ public class OrderServiceImpl implements OrderService {
 
     public void reminder(Long id) {
         //TODO 催单的逻辑
-        return;
+        Orders ordersDB = ordersMapper.getById(id);
+
+        if(ordersDB == null){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Map map = new HashMap<>();
+        map.put("type", 2);
+        map.put("orderId", id);
+        map.put("content", "订单号: " + ordersDB.getNumber());
+
+        //通过websocket向浏览器发送数据
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
     }
 
     @Transactional
