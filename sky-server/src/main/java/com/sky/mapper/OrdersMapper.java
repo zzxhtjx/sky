@@ -9,6 +9,9 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 /**
  * @Description TODO
  * @Classname OrdersMapper
@@ -53,4 +56,16 @@ public interface OrdersMapper {
 
     @Update("update orders set status = #{status} and cancel_reason = #{cancelReason} where id = #{id}")
     void cancel(OrdersCancelDTO ordersCancelDTO, Integer status);
+
+    /**
+     * description:根据订单状态和超时时间查询订单,并取消
+     * @since: 1.0.0
+     * @author: dongxuanmang
+     * @date: 2024/1/6 14:21
+     * @param status
+     * @param orderTime
+     * @return java.util.List<com.sky.entity.Orders>
+     */
+    @Select("select * from orders where status = #{status} and order_time < #{orderTime}")
+    List<Orders> getByStatusAndOrderTimeLT(Integer status, LocalDateTime orderTime);
 }
