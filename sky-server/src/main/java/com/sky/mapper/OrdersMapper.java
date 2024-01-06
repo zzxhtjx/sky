@@ -1,8 +1,13 @@
 package com.sky.mapper;
 
+import com.github.pagehelper.Page;
+import com.sky.dto.OrdersCancelDTO;
+import com.sky.dto.OrdersPageQueryDTO;
+import com.sky.dto.OrdersRejectionDTO;
 import com.sky.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * @Description TODO
@@ -28,4 +33,24 @@ public interface OrdersMapper {
      * @param orders
      */
     void update(Orders orders);
+
+    @Select("select * from orders where id = #{id}")
+    Orders getById(Long id);
+
+    Page<Orders> pageQuery(OrdersPageQueryDTO ordersPageQueryDTO);
+
+    @Update("update orders set status = #{status} where id = #{id}")
+    void cancelById(Long id, Integer status);
+
+    @Select("select count(*) from orders where status = #{status}")
+    Integer getStatusCount(int status);
+
+    @Update("update orders set status = #{status} where id = #{id}")
+    void setStatus(Long id, Integer status);
+
+    @Update("update orders set status = #{status} and rejection_reason = #{rejectionReason} where id = #{id}")
+    void reject(OrdersRejectionDTO ordersRejectionDTO, Integer status);
+
+    @Update("update orders set status = #{status} and cancel_reason = #{cancelReason} where id = #{id}")
+    void cancel(OrdersCancelDTO ordersCancelDTO, Integer status);
 }

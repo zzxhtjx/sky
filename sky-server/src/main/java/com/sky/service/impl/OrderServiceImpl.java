@@ -1,19 +1,22 @@
 package com.sky.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
-import com.sky.dto.OrdersPaymentDTO;
-import com.sky.dto.OrdersSubmitDTO;
+import com.sky.dto.*;
 import com.sky.entity.*;
 import com.sky.exception.AddressBookBusinessException;
 import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
-import com.sky.service.OrdersService;
+import com.sky.result.PageResult;
+import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +36,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class OrdersServiceImpl implements OrdersService {
+public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrdersMapper ordersMapper;
 
@@ -146,5 +149,77 @@ public class OrdersServiceImpl implements OrdersService {
                 .build();
 
         ordersMapper.update(orders);
+    }
+
+    public void reject(OrdersRejectionDTO ordersRejectionDTO) {
+        ordersMapper.reject(ordersRejectionDTO, Orders.CANCELLED);
+    }
+
+    public void setStatus(Long id, Integer status) {
+        ordersMapper.setStatus(id, status);
+    }
+
+    public PageResult pageQuery(OrdersPageQueryDTO pageQueryDTO) {
+        Page<Orders>orders =  ordersMapper.pageQuery(pageQueryDTO);
+        List<OrderVO> list = new ArrayList<>();
+        //直接进行select查询
+        for(Orders order : orders){
+            OrderVO orderVO = new OrderVO();
+            BeanUtils.copyProperties(order, orderVO);
+            List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(order.getId());
+            orderVO.setOrderDetailList(orderDetailList);
+            list.add(orderVO);
+        }
+        PageResult pageResult = new PageResult(list.size(), list);
+        return pageResult;
+    }
+
+
+    public void cancelById(Long id) {
+        //第一步把订单的信息状态修改为已取消
+        ordersMapper.cancelById(id, Orders.CANCELLED);
+    }
+
+    public OrderStatisticsVO getStatistics() {
+        OrderStatisticsVO orderStatisticsVO = new OrderStatisticsVO();
+        orderStatisticsVO.setConfirmed(ordersMapper.getStatusCount(Orders.CONFIRMED));
+        orderStatisticsVO.setToBeConfirmed(ordersMapper.getStatusCount(Orders.TO_BE_CONFIRMED));
+        orderStatisticsVO.setDeliveryInProgress(ordersMapper.getStatusCount(Orders.DELIVERY_IN_PROGRESS));
+        return orderStatisticsVO;
+    }
+
+    public void reminder(Long id) {
+        //TODO 催单的逻辑
+        return;
+    }
+
+    @Transactional
+    public void repetition(Long id) {
+        Orders orders = ordersMapper.getById(id);
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
+        orders.setOrderTime(LocalDateTime.now());//修改订单实践
+        orders.setPayStatus(Orders.UN_PAID);//付款状态修改
+        orders.setStatus(Orders.PENDING_PAYMENT);
+        orders.setNumber(String.valueOf(System.currentTimeMillis()));
+        orders.setId(null);
+        ordersMapper.insert(orders);//重新插入
+        orderDetailList.forEach(orderDetail -> {
+            orderDetail.setOrderId(orders.getId());//重新detail的orderId
+            orderDetail.setId(null);
+        });
+        orderDetailMapper.insertBatch(orderDetailList);
+    }
+
+    public OrderVO getOrderById(Long id) {
+        Orders orders = ordersMapper.getById(id);
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(orders, orderVO);
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
+        orderVO.setOrderDetailList(orderDetailList);
+        return orderVO;
+    }
+
+    public void cancel(OrdersCancelDTO ordersCancelDTO) {
+        ordersMapper.cancel(ordersCancelDTO, Orders.CANCELLED);
     }
 }

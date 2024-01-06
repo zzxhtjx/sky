@@ -4,7 +4,7 @@ import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.sky.properties.WeChatProperties;
-import com.sky.service.OrdersService;
+import com.sky.service.OrderService;
 import com.wechat.pay.contrib.apache.httpclient.util.AesUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
@@ -25,7 +25,7 @@ import java.util.HashMap;
 @Slf4j
 public class PayNotifyController {
     @Autowired
-    private OrdersService ordersService;
+    private OrderService orderService;
     @Autowired
     private WeChatProperties weChatProperties;
 
@@ -52,7 +52,7 @@ public class PayNotifyController {
         log.info("微信支付交易号：{}", transactionId);
 
         //业务处理，修改订单状态、来单提醒
-        ordersService.paySuccess(outTradeNo);
+        orderService.paySuccess(outTradeNo);
 
         //给微信响应
         responseToWeixin(response);
