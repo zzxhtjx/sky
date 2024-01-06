@@ -1,6 +1,7 @@
 package com.sky.controller.admin;
 
 import com.sky.dto.OrdersCancelDTO;
+import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersRejectionDTO;
 import com.sky.entity.Orders;
@@ -29,7 +30,7 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @GetMapping("/detail/{id}")
+    @GetMapping("/details/{id}")
     @ApiOperation("查询订单所有情况")
     public Result<OrderVO> getById(@PathVariable Long id){
         OrderVO orderVO = orderService.getOrderById(id);
@@ -52,8 +53,8 @@ public class OrderController {
 
     @PutMapping("/confirm")
     @ApiOperation("接单")
-    public Result confirm(@RequestBody Long id){
-        orderService.setStatus(id, Orders.CONFIRMED);
+    public Result confirm(@RequestBody OrdersConfirmDTO ordersConfirmDTO){
+        orderService.confirm(ordersConfirmDTO);
         return Result.success();
     }
 

@@ -2,6 +2,7 @@ package com.sky.mapper;
 
 import com.github.pagehelper.Page;
 import com.sky.dto.OrdersCancelDTO;
+import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersRejectionDTO;
 import com.sky.entity.Orders;
@@ -11,6 +12,7 @@ import org.apache.ibatis.annotations.Update;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description TODO
@@ -51,10 +53,13 @@ public interface OrdersMapper {
     @Update("update orders set status = #{status} where id = #{id}")
     void setStatus(Long id, Integer status);
 
-    @Update("update orders set status = #{status} and rejection_reason = #{rejectionReason} where id = #{id}")
+    @Update("update orders set status = #{status} where id = #{id}")
+    void confirm(OrdersConfirmDTO ordersConfirmDTO);
+
+    @Update("update orders set status = #{status} ,rejection_reason = #{ordersRejectionDTO.rejectionReason} where id = #{ordersRejectionDTO.id}")
     void reject(OrdersRejectionDTO ordersRejectionDTO, Integer status);
 
-    @Update("update orders set status = #{status} and cancel_reason = #{cancelReason} where id = #{id}")
+    @Update("update orders set status = #{status} ,cancel_reason = #{cancelReason} where id = #{id}")
     void cancel(OrdersCancelDTO ordersCancelDTO, Integer status);
 
     /**
@@ -68,4 +73,6 @@ public interface OrdersMapper {
      */
     @Select("select * from orders where status = #{status} and order_time < #{orderTime}")
     List<Orders> getByStatusAndOrderTimeLT(Integer status, LocalDateTime orderTime);
+
+    Double getByMap(Map map);
 }

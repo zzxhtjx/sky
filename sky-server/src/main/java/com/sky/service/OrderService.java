@@ -45,5 +45,7 @@ public interface OrderService {
 
     void setStatus(Long id, Integer status);
 
+    void confirm(OrdersConfirmDTO ordersConfirmDTO);
+
     void reject(OrdersRejectionDTO ordersRejectionDTO);
 }

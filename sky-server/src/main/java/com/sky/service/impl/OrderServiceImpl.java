@@ -175,6 +175,11 @@ public class OrderServiceImpl implements OrderService {
         ordersMapper.setStatus(id, status);
     }
 
+    public void confirm(OrdersConfirmDTO ordersConfirmDTO){
+        ordersConfirmDTO.setStatus(Orders.CONFIRMED);
+        ordersMapper.confirm(ordersConfirmDTO);
+    }
+
     public PageResult pageQuery(OrdersPageQueryDTO pageQueryDTO) {
         Page<Orders>orders =  ordersMapper.pageQuery(pageQueryDTO);
         List<OrderVO> list = new ArrayList<>();
