@@ -18,7 +18,7 @@ import java.util.Map;
  * @Created by dongxuanmang
  */
 @Mapper
-public interface OrdersMapper {
+public interface OrderMapper {
 
     void insert(Orders orders);
 
