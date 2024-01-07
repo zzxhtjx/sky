@@ -4,6 +4,8 @@ import com.sky.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.time.LocalDateTime;
+
 /**
  * @Description TODO
  * @Classname UserMapper
@@ -19,4 +21,7 @@ public interface UserMapper {
 
     @Select("select * from user where id = #{userId}")
     User getById(Long userId);
+
+    @Select("select sum(1) from user where create_time < #{dateTime}")
+    Long getUserBefore(LocalDateTime dateTime);
 }

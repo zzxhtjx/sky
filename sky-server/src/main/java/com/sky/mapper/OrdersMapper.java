@@ -1,10 +1,7 @@
 package com.sky.mapper;
 
 import com.github.pagehelper.Page;
-import com.sky.dto.OrdersCancelDTO;
-import com.sky.dto.OrdersConfirmDTO;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersRejectionDTO;
+import com.sky.dto.*;
 import com.sky.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -75,4 +72,28 @@ public interface OrdersMapper {
     List<Orders> getByStatusAndOrderTimeLT(Integer status, LocalDateTime orderTime);
 
     Double getByMap(Map map);
+
+    /**
+     * description: 获取订单总数
+     * @since: 1.0.0
+     * @author: dongxuanmang
+     * @date: 2024/1/7 13:27
+     * @param map
+     * @return java.lang.Integer
+     */
+    @Select("select sum(1) from orders where order_time > #{begin} and order_time < #{end}")
+    Integer getOrder(Map map);
+
+    /**
+     * description: 获取完成的订单总数
+     * @since: 1.0.0
+     * @author: dongxuanmang
+     * @date: 2024/1/7 13:28
+     * @param map
+     * @return java.lang.Integer
+     */
+    @Select("select sum(1) from orders where order_time > #{begin} and order_time < #{end} and status = #{status}")
+    Integer getValidOrder(Map map);
+
+    List<GoodsSalesDTO> getTop(Map map);
 }

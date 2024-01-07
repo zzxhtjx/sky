@@ -76,5 +76,14 @@
             </if>
         </where>
     </select>
+    <select id="getTop" resultType="com.sky.dto.GoodsSalesDTO">
+        select d.name, sum(od.number) as number from order_detail as od, dish as d, orders as o
+        where o.order_time &gt; #{begin} and o.order_time &lt; #{end}
+        and od.dish_id = d.id and od.order_id = o.id
+        and od.setmeal_id is null
+        group by od.dish_id
+        order by number desc
+        limit #{top}
+    </select>
 
 </mapper>
