@@ -53,6 +53,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
         //查询总订单数
         Integer totalOrderCount = orderMapper.getOrder(map);
+        totalOrderCount = totalOrderCount == null ? 0 : totalOrderCount;
 
         map.put("status", Orders.COMPLETED);
         //营业额
@@ -61,6 +62,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
         //有效订单数
         Integer validOrderCount = orderMapper.getValidOrder(map);
+        validOrderCount = validOrderCount == null ? 0 : validOrderCount;
 
         Double unitPrice = 0.0;
 
@@ -74,6 +76,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
         //新增用户数
         Integer newUsers = userMapper.countByMap(map);
+        newUsers = newUsers == null ? 0 : newUsers;
 
         return BusinessDataVO.builder()
                 .turnover(turnover)
