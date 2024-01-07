@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 /**
  * @Description TODO
@@ -24,4 +25,7 @@ public interface UserMapper {
 
     @Select("select sum(1) from user where create_time < #{dateTime}")
     Long getUserBefore(LocalDateTime dateTime);
+
+    @Select("select sum(1) from user where create_time > #{begin} and create_time < #{end}")
+    Integer countByMap(Map map);
 }

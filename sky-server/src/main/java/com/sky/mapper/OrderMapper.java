@@ -92,7 +92,6 @@ public interface OrderMapper {
      * @param map
      * @return java.lang.Integer
      */
-    @Select("select sum(1) from orders where order_time > #{begin} and order_time < #{end} and status = #{status}")
     Integer getValidOrder(Map map);
 
     List<GoodsSalesDTO> getTop(Map map);

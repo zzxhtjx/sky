@@ -2,7 +2,7 @@ package com.sky.service.impl;
 
 import com.sky.dto.GoodsSalesDTO;
 import com.sky.entity.Orders;
-import com.sky.mapper.OrdersMapper;
+import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
 import com.sky.vo.*;
@@ -29,7 +29,7 @@ import java.util.Map;
 @Slf4j
 public class ReportServiceImpl implements ReportService {
     @Autowired
-    private OrdersMapper ordersMapper;
+    private OrderMapper orderMapper;
 
     @Autowired
     private UserMapper userMapper;
@@ -94,9 +94,9 @@ public class ReportServiceImpl implements ReportService {
             Map map = new HashMap<>();
             map.put("begin", beginTime);
             map.put("end", endTime);
-            Integer order = ordersMapper.getOrder(map);
+            Integer order = orderMapper.getOrder(map);
             map.put("status", Orders.COMPLETED);
-            Integer validOrder = ordersMapper.getValidOrder(map);
+            Integer validOrder = orderMapper.getValidOrder(map);
             order = order == null ? 0 :order;
             validOrder = validOrder == null ? 0 : validOrder;
             totalOrderCount += order;
@@ -133,7 +133,7 @@ public class ReportServiceImpl implements ReportService {
             map.put("begin", beginTime);
             map.put("end", endTime);
             map.put("status", Orders.COMPLETED);
-            Double turnover = ordersMapper.getByMap(map);
+            Double turnover = orderMapper.getByMap(map);
             turnover = turnover == null ? 0.0 : turnover;
             turnoverList.add(turnover);
         }
@@ -152,7 +152,7 @@ public class ReportServiceImpl implements ReportService {
         map.put("begin", beginTime);
         map.put("end", endTime);
         map.put("top", topNum);
-        List<GoodsSalesDTO> data = ordersMapper.getTop(map);
+        List<GoodsSalesDTO> data = orderMapper.getTop(map);
         List<String> namelist = new ArrayList<>();
         List<Integer> numberlist = new ArrayList<>();
         for(GoodsSalesDTO goodsSalesDTO : data){

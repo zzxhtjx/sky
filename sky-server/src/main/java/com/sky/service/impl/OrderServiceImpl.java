@@ -42,7 +42,7 @@ import java.util.Map;
 @Slf4j
 public class OrderServiceImpl implements OrderService {
     @Autowired
-    private OrdersMapper ordersMapper;
+    private OrderMapper orderMapper;
 
     @Autowired
     private OrderDetailMapper orderDetailMapper;
@@ -87,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
         orders.setPhone(addressBook.getPhone());
         orders.setConsignee(addressBook.getConsignee());
         orders.setUserId(currentId);
-        ordersMapper.insert(orders);
+        orderMapper.insert(orders);
         //上传orders detail table
         List<OrderDetail> orderDetailList = new ArrayList<>();
         for(ShoppingCart cart : all){
@@ -145,7 +145,7 @@ public class OrderServiceImpl implements OrderService {
     public void paySuccess(String outTradeNo) {
 
         // 根据订单号查询订单
-        Orders ordersDB = ordersMapper.getByNumber(outTradeNo);
+        Orders ordersDB = orderMapper.getByNumber(outTradeNo);
 
         // 根据订单id更新订单的状态、支付方式、支付状态、结账时间
         Orders orders = Orders.builder()
@@ -155,7 +155,7 @@ public class OrderServiceImpl implements OrderService {
                 .checkoutTime(LocalDateTime.now())
                 .build();
 
-        ordersMapper.update(orders);
+        orderMapper.update(orders);
 
         //向浏览器推送消息 type 1 -来单 2-催单 orderId context
         Map map = new HashMap<>();
@@ -168,20 +168,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public void reject(OrdersRejectionDTO ordersRejectionDTO) {
-        ordersMapper.reject(ordersRejectionDTO, Orders.CANCELLED);
+        orderMapper.reject(ordersRejectionDTO, Orders.CANCELLED);
     }
 
     public void setStatus(Long id, Integer status) {
-        ordersMapper.setStatus(id, status);
+        orderMapper.setStatus(id, status);
     }
 
     public void confirm(OrdersConfirmDTO ordersConfirmDTO){
         ordersConfirmDTO.setStatus(Orders.CONFIRMED);
-        ordersMapper.confirm(ordersConfirmDTO);
+        orderMapper.confirm(ordersConfirmDTO);
     }
 
     public PageResult pageQuery(OrdersPageQueryDTO pageQueryDTO) {
-        Page<Orders>orders =  ordersMapper.pageQuery(pageQueryDTO);
+        Page<Orders>orders =  orderMapper.pageQuery(pageQueryDTO);
         List<OrderVO> list = new ArrayList<>();
         //直接进行select查询
         for(Orders order : orders){
@@ -198,20 +198,20 @@ public class OrderServiceImpl implements OrderService {
 
     public void cancelById(Long id) {
         //第一步把订单的信息状态修改为已取消
-        ordersMapper.cancelById(id, Orders.CANCELLED);
+        orderMapper.cancelById(id, Orders.CANCELLED);
     }
 
     public OrderStatisticsVO getStatistics() {
         OrderStatisticsVO orderStatisticsVO = new OrderStatisticsVO();
-        orderStatisticsVO.setConfirmed(ordersMapper.getStatusCount(Orders.CONFIRMED));
-        orderStatisticsVO.setToBeConfirmed(ordersMapper.getStatusCount(Orders.TO_BE_CONFIRMED));
-        orderStatisticsVO.setDeliveryInProgress(ordersMapper.getStatusCount(Orders.DELIVERY_IN_PROGRESS));
+        orderStatisticsVO.setConfirmed(orderMapper.getStatusCount(Orders.CONFIRMED));
+        orderStatisticsVO.setToBeConfirmed(orderMapper.getStatusCount(Orders.TO_BE_CONFIRMED));
+        orderStatisticsVO.setDeliveryInProgress(orderMapper.getStatusCount(Orders.DELIVERY_IN_PROGRESS));
         return orderStatisticsVO;
     }
 
     public void reminder(Long id) {
         //TODO 催单的逻辑
-        Orders ordersDB = ordersMapper.getById(id);
+        Orders ordersDB = orderMapper.getById(id);
 
         if(ordersDB == null){
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
@@ -228,14 +228,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     public void repetition(Long id) {
-        Orders orders = ordersMapper.getById(id);
+        Orders orders = orderMapper.getById(id);
         List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
         orders.setOrderTime(LocalDateTime.now());//修改订单实践
         orders.setPayStatus(Orders.UN_PAID);//付款状态修改
         orders.setStatus(Orders.PENDING_PAYMENT);
         orders.setNumber(String.valueOf(System.currentTimeMillis()));
         orders.setId(null);
-        ordersMapper.insert(orders);//重新插入
+        orderMapper.insert(orders);//重新插入
         orderDetailList.forEach(orderDetail -> {
             orderDetail.setOrderId(orders.getId());//重新detail的orderId
             orderDetail.setId(null);
@@ -244,7 +244,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public OrderVO getOrderById(Long id) {
-        Orders orders = ordersMapper.getById(id);
+        Orders orders = orderMapper.getById(id);
         OrderVO orderVO = new OrderVO();
         BeanUtils.copyProperties(orders, orderVO);
         List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
@@ -253,6 +253,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public void cancel(OrdersCancelDTO ordersCancelDTO) {
-        ordersMapper.cancel(ordersCancelDTO, Orders.CANCELLED);
+        orderMapper.cancel(ordersCancelDTO, Orders.CANCELLED);
     }
 }
